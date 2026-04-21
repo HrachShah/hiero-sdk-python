@@ -36,7 +36,9 @@ class CommonTransactionParams:
             try:
                 transaction.set_transaction_id(TransactionId.from_string(self.transactionId))
             except Exception:
-                transaction.set_transaction_id(TransactionId.generate(AccountId.from_string(self.transactionId)))
+                # Fall back to generating a new TransactionId rather than
+                # re-using the unparseable string which would throw again.
+                transaction.set_transaction_id(TransactionId.generate())
 
         # TODO add a max_transaction_fee sdk missing func
 
