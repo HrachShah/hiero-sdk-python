@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import traceback
 from typing import Any
 
 from hiero_sdk_python.account.account_balance import AccountBalance
@@ -112,8 +111,6 @@ class CryptoGetAccountBalanceQuery(Query):
 
             return query
         except Exception as e:
-            print(f"Exception in _make_request: {e}")
-            traceback.print_exc()
             raise
 
     def _get_method(self, channel: _Channel) -> _Method:
