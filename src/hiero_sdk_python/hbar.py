@@ -177,9 +177,10 @@ class Hbar:
         if not match:
             raise ValueError(f"Invalid Hbar format: '{amount}'")
 
-        parts = amount.split(" ")
-        value = Decimal(parts[0])
-        unit = HbarUnit.from_string(parts[1]) if len(parts) == 2 else unit
+        value = Decimal(match.group(1))
+        unit_str = match.group(2)
+        if unit_str:
+            unit = HbarUnit.from_string(unit_str.strip())
         return cls(value, unit=unit)
 
     def __str__(self) -> str:
