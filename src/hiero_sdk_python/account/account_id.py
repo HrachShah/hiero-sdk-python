@@ -379,14 +379,14 @@ class AccountId:
         """
         if not isinstance(other, AccountId):
             return False
-        return (self.shard, self.realm, self.num, self.alias_key, self.evm_address) == (
-            other.shard,
-            other.realm,
-            other.num,
-            other.alias_key,
-            other.evm_address,
+        return (
+            self.shard == other.shard
+            and self.realm == other.realm
+            and self.num == other.num
+            and self.alias_key == other.alias_key
+            and self.evm_address == other.evm_address
         )
 
     def __hash__(self) -> int:
         """Returns a hash value for the AccountId instance."""
-        return hash((self.shard, self.realm, self.num))
+        return hash((self.shard, self.realm, self.num, self.alias_key, self.evm_address))

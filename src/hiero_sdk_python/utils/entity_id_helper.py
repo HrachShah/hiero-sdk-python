@@ -6,6 +6,8 @@ from typing import TYPE_CHECKING, Any
 
 import requests
 
+from hiero_sdk_python.crypto.public_key import PublicKey
+
 
 if TYPE_CHECKING:
     from hiero_sdk_python.client.client import Client
