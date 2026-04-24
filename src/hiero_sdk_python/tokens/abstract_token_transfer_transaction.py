@@ -154,7 +154,8 @@ class AbstractTokenTransferTransaction(Transaction, ABC, Generic[T]):
         for transfer in self.token_transfers[token_id]:
             if transfer.account_id == account_id:
                 transfer.amount += amount
-                transfer.expected_decimals = expected_decimals
+                if expected_decimals is not None:
+                    transfer.expected_decimals = expected_decimals
                 return
 
         self.token_transfers[token_id].append(
