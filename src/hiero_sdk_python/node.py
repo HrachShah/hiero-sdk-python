@@ -300,3 +300,4 @@ class _Node:
     def _decrease_backoff(self) -> None:
         """Decrease the node's backoff duration after a successful operation."""
         self._current_backoff = max(self._current_backoff / 2, self._min_backoff)
+        self._readmit_time = time.monotonic()
