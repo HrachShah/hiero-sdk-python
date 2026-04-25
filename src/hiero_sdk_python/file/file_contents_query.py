@@ -75,8 +75,7 @@ class FileContentsQuery(Query):
             query.fileGetContents.CopyFrom(file_contents_query)
 
             return query
-        except Exception as e:
-            print(f"Exception in _make_request: {e}")
+        except Exception:
             raise
 
     def _get_method(self, channel: _Channel) -> _Method:

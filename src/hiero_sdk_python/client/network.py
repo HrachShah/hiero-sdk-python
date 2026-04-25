@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import secrets
 import time
+import warnings
 from typing import Any
 
 import requests
@@ -165,7 +166,7 @@ class Network:
         """
         base_url: str | None = self.MIRROR_NODE_URLS.get(self.network)
         if not base_url:
-            print(f"No known mirror node URL for network='{self.network}'. Skipping fetch.")
+            warnings.warn(f"No known mirror node URL for network='{self.network}'. Skipping fetch.")
             return []
 
         url: str = f"{base_url}/api/v1/network/nodes?limit=100&order=desc"
@@ -186,7 +187,7 @@ class Network:
 
             return nodes
         except requests.RequestException as e:
-            print(f"Error fetching nodes from mirror node API: {e}")
+            warnings.warn(f"Error fetching nodes from mirror node API: {e}")
             return []
 
     def _fetch_nodes_from_default_nodes(self) -> list[_Node]:

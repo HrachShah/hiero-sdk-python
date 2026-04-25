@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import traceback
-
 from hiero_sdk_python.channels import _Channel
 from hiero_sdk_python.client.client import Client
 from hiero_sdk_python.executable import _Method
@@ -74,9 +72,7 @@ class FileInfoQuery(Query):
             query.fileGetInfo.CopyFrom(file_info_query)
 
             return query
-        except Exception as e:
-            print(f"Exception in _make_request: {e}")
-            traceback.print_exc()
+        except Exception:
             raise
 
     def _get_method(self, channel: _Channel) -> _Method:
