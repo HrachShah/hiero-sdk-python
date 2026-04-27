@@ -91,6 +91,10 @@ class _Executable(ABC):
 
         self._used_node_account_id: AccountId | None = None
         self._node_account_ids_index: int = 0
+        # Tracks whether we have made a complete pass through all nodes without
+        # finding a healthy one. Set by _advance_node_index, cleared when a
+        # node succeeds.
+        self._nodes_exhausted: bool = False
 
     def set_node_account_ids(self, node_account_ids: list[AccountId]):
         """
@@ -454,6 +458,13 @@ class _Executable(ABC):
 
             # Build the request using the executable's _make_request method
             proto_request = self._make_request()
+
+            # Check node health before attempting the request.
+            # Raising early lets us advance to the next node on the same iteration
+            # rather than burning a full attempt loop iteration on a node that
+            # is still in backoff.
+            if self._node_account_ids_index >= len(self.node_account_ids):
+                raise RuntimeError("All nodes are unhealthy")
 
             if not node.is_healthy():
                 self._handle_unhealthy_node(proto_request, attempt, logger, err_persistant)
