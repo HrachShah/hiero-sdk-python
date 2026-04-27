@@ -83,9 +83,9 @@ class _Node:
         Initialize a new Node instance.
 
         Args:
-            account_id (AccountId): The account ID of the node.
-            address (str): The address of the node.
-            min_backoff (int): The minimum backoff time in seconds.
+            account_id: The account ID of the node.
+            address: The network address of the node.
+            address_book: The node address book entry, or None for default nodes.
         """
         self._account_id: AccountId = account_id
         self._channel: _Channel | None = None
