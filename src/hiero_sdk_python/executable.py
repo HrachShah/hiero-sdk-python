@@ -434,8 +434,11 @@ class _Executable(ABC):
             # Store for logging and receipts
             self.node_account_id = node._account_id
 
-            # Create a channel wrapper from the client's channel
-            channel = node._get_channel()
+            # Check node health before spending resources on channel/request setup.
+            # Unhealthy nodes are skipped immediately without building a gRPC channel.
+            if not node.is_healthy():
+                self._handle_unhealthy_node(None, attempt, logger, err_persistant)
+                continue
 
             logger.trace(
                 "Executing",
@@ -450,14 +453,10 @@ class _Executable(ABC):
             )
 
             # Get the appropriate gRPC method to call
-            method = self._get_method(channel)
+            method = self._get_method(node._get_channel())
 
             # Build the request using the executable's _make_request method
             proto_request = self._make_request()
-
-            if not node.is_healthy():
-                self._handle_unhealthy_node(proto_request, attempt, logger, err_persistant)
-                continue
 
             # Execute the GRPC call
             try:
