@@ -191,7 +191,10 @@ class Network:
 
     def _fetch_nodes_from_default_nodes(self) -> list[_Node]:
         """Fetches the list of nodes from the default nodes for the network."""
-        return [_Node(node[1], node[0], None) for node in self.DEFAULT_NODES[self.network]]
+        default_nodes = self.DEFAULT_NODES.get(self.network)
+        if not default_nodes:
+            raise ValueError(f"No default nodes found for network='{self.network}'")
+        return [_Node(node[1], node[0], None) for node in default_nodes]
 
     def _select_node(self) -> _Node:
         """
