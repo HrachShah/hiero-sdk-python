@@ -277,7 +277,12 @@ class _Node:
             socket.create_connection((host, port), timeout=CERT_FETCH_TIMEOUT_SECONDS) as sock,
             context.wrap_socket(sock, server_hostname=server_hostname) as tls_socket,
         ):
-            der_cert = tls_socket.getpeercert(True)
+            try:
+                der_cert = tls_socket.getpeercert(True)
+            except ssl.SSLError as e:
+                raise ValueError(
+                    f"Failed to retrieve certificate from {host}:{port}: {e}"
+                ) from e
 
         # Convert DER to PEM format (matching Java's PEM encoding)
         return ssl.DER_cert_to_PEM_cert(der_cert).encode("utf-8")
