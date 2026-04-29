@@ -287,7 +287,9 @@ class _Node:
         Determine whether this node is currently eligible for use.
 
         A node is considered healthy if the current time is greater than or equal
-        to its scheduled readmission time (`_readmit_time`). Nodes
+        to its scheduled readmission time (``_readmit_time``). Nodes that have
+        recently failed are placed in a backoff period and are not eligible
+        for use until that period expires.
         """
         return self._readmit_time <= time.monotonic()
 

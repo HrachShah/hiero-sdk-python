@@ -431,6 +431,12 @@ class _Executable(ABC):
             if node is None:
                 raise RuntimeError(f"No node found for node_account_id: {self.node_account_id}")
 
+            # Check node health before creating channel or building request.
+            # This avoids wasting resources on nodes that are still in backoff.
+            if not node.is_healthy():
+                self._handle_unhealthy_node(None, attempt, logger, err_persistant)
+                continue
+
             # Store for logging and receipts
             self.node_account_id = node._account_id
 
@@ -454,10 +460,6 @@ class _Executable(ABC):
 
             # Build the request using the executable's _make_request method
             proto_request = self._make_request()
-
-            if not node.is_healthy():
-                self._handle_unhealthy_node(proto_request, attempt, logger, err_persistant)
-                continue
 
             # Execute the GRPC call
             try:

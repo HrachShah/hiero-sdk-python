@@ -31,8 +31,7 @@ class EvmAddress(Key):
 
         if len(address) == 40:
             return cls(address_bytes=bytes.fromhex(address))
-
-        raise ValueError("Invalid hex string for evm_address.")
+        raise ValueError(f"Invalid hex string for evm_address: expected 40 hex digits, got {len(address)}")
 
     @classmethod
     def from_bytes(cls, address_bytes: bytes) -> EvmAddress:
