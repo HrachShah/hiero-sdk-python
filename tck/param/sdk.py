@@ -8,8 +8,8 @@ from tck.util.param_utils import parse_session_id
 
 @dataclass
 class SetupParams(BaseParams):
-    operatorAccountId: str = None
-    operatorPrivateKey: str = None
+    operatorAccountId: str | None = None
+    operatorPrivateKey: str | None = None
     nodeIp: str | None = None
     nodeAccountId: str | None = None
     mirrorNetworkIp: str | None = None

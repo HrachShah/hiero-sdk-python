@@ -8,7 +8,7 @@ from tck.util.param_utils import parse_session_id
 
 @dataclass
 class BaseParams:
-    sessionId: str = None
+    sessionId: str | None = None
 
     @classmethod
     def parse_json_params(cls, params: dict) -> BaseParams:

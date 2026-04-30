@@ -7,7 +7,7 @@ from tck.util.key_utils import KeyType
 
 @dataclass
 class KeyGenerationParams:
-    type: KeyType = None
+    type: KeyType | None = None
     fromKey: str | None = None
     threshold: int | None = None
     keys: list[KeyGenerationParams] | None = None
