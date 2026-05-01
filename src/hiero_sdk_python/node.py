@@ -122,6 +122,9 @@ class _Node:
         if self._channel:
             return self._channel
 
+        if not self.is_healthy():
+            return None
+
         if self._address._is_transport_security():
             if self._root_certificates:
                 # Use the certificate that is provided
