@@ -389,4 +389,4 @@ class AccountId:
 
     def __hash__(self) -> int:
         """Returns a hash value for the AccountId instance."""
-        return hash((self.shard, self.realm, self.num))
+        return hash((self.shard, self.realm, self.num, self.alias_key, self.evm_address))
