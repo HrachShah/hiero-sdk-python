@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 import struct
+import json
 from typing import TYPE_CHECKING, Any
 
 import requests
@@ -155,6 +156,9 @@ def perform_query_to_mirror_node(url: str, timeout: float = 10) -> dict[str, Any
 
     except requests.RequestException as e:
         raise RuntimeError(f"Unexpected error while querying mirror node: {url}") from e
+
+    except json.JSONDecodeError as e:
+        raise RuntimeError(f"Mirror node returned invalid JSON for {url}: {e}") from e
 
 
 def to_solidity_address(shard: int, realm: int, num: int) -> str:
