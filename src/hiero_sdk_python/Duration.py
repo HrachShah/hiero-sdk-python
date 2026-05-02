@@ -22,7 +22,7 @@ class Duration:
     @classmethod
     def _from_proto(cls, proto: proto_Duration) -> Duration:
         if isinstance(proto, Duration):
-            raise ValueError("Invalid duration proto")
+            raise TypeError(f"Invalid duration proto, got {type(proto).__name__}")
         return cls(seconds=proto.seconds)
 
     def __str__(self) -> str:
