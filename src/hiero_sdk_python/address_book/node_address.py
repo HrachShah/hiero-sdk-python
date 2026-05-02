@@ -133,12 +133,13 @@ class NodeAddress:
     def _from_dict(cls, node: NodeDict) -> NodeAddress:
         """Create a NodeAddress from a dictionary."""
         service_endpoints: list[EndpointDict] = node.get("service_endpoints", [])
-        public_key: str = node.get("public_key")
+        public_key: str | None = node.get("public_key")
         account_id: AccountId = AccountId.from_string(node.get("node_account_id"))
         node_id: int = node.get("node_id")
         # Get the hash from the node, remove the 0x prefix and convert to bytes
-        cert_hash: bytes = bytes.fromhex(node.get("node_cert_hash").removeprefix("0x"))
-        description: str = node.get("description")
+        cert_hash_str: str = node.get("node_cert_hash", "")
+        cert_hash: bytes = bytes.fromhex(cert_hash_str.removeprefix("0x")) if cert_hash_str else b""
+        description: str | None = node.get("description")
 
         endpoints: list[Endpoint] = [Endpoint.from_dict(endpoint) for endpoint in service_endpoints]
 
