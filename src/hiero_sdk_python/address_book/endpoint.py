@@ -139,7 +139,10 @@ class Endpoint:
         Returns:
             str: The string representation in the format 'domain:port' or 'ip:port'.
         """
-        return f"{self._address.decode('utf-8')}:{self._port}"
+        address = b""
+        if self._address is not None:
+            address = self._address
+        return f"{address.decode('utf-8')}:{self._port}"
 
     @classmethod
     def from_dict(cls, json_data: EndpointDict) -> Endpoint:
