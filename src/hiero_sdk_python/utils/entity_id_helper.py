@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import re
 import struct
 from typing import TYPE_CHECKING, Any
@@ -145,7 +146,10 @@ def perform_query_to_mirror_node(url: str, timeout: float = 10) -> dict[str, Any
         response: requests.Response = requests.get(url, timeout=timeout)
         response.raise_for_status()
 
-        return response.json()
+        try:
+            return response.json()
+        except json.JSONDecodeError:
+            raise RuntimeError(f"Mirror node response is not valid JSON for {url}") from None
 
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
         raise RuntimeError(f"Mirror node request failed for {url}: {e}") from e
