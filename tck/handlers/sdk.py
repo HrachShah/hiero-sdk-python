@@ -38,6 +38,11 @@ def set_operator(params: SetupParams) -> SetupResponse:
     operator_private_key = PrivateKey.from_string(params.operatorPrivateKey)
 
     client = get_client(params.sessionId)
+    if client is None:
+        raise JsonRpcError.invalid_request_error(
+            f"no client found for session '{params.sessionId}'. "
+            "Call setup first to initialize the client."
+        )
     client.set_operator(operator_account_id, operator_private_key)
 
     return SetupResponse("")
