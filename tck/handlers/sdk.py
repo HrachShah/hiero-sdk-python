@@ -29,9 +29,6 @@ def setup_handler(params: SetupParams) -> SetupResponse:
         client_type = "testnet"
         store_client(params.sessionId, client)
 
-    client = get_client(params.sessionId)
-    client.set_operator(operator_account_id, operator_private_key)
-
     return SetupResponse(f"Successfully setup {client_type} client")
 
 
