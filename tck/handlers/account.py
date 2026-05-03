@@ -11,6 +11,7 @@ from tck.response.account import CreateAccountResponse
 from tck.util.client_utils import get_client
 from tck.util.constants import DEFAULT_GRPC_TIMEOUT
 from tck.util.key_utils import get_key_from_string
+from tck.exceptions import JsonRpcError
 
 
 def _build_create_account_transaction(params: CreateAccountParams) -> AccountCreateTransaction:
@@ -52,6 +53,11 @@ def _build_create_account_transaction(params: CreateAccountParams) -> AccountCre
 @rpc_method("createAccount")
 def create_account(params: CreateAccountParams) -> CreateAccountResponse:
     client = get_client(params.sessionId)
+    if client is None:
+        raise JsonRpcError.invalid_request_error(
+            f"no client found for session '{params.sessionId}'. "
+            "Call setup first to initialize the client."
+        )
 
     transaction = _build_create_account_transaction(params)
 
