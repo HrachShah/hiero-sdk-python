@@ -83,6 +83,10 @@ def _handle_key_list(params: KeyGenerationParams, response: KeyGenerationRespons
         key_list.add_key(get_key_from_string(key_string))
 
     if params.type == KeyType.THRESHOLD_KEY:
+        if params.threshold is None:
+            raise JsonRpcError.invalid_params_error(
+                "invalid request: threshold is required for ThresholdKey type."
+            )
         key_list.set_threshold(int(params.threshold))
 
     return key_list.to_bytes().hex()
