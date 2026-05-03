@@ -113,7 +113,11 @@ class TransactionId:
         Returns:
             str: The string representation of the TransactionId.
         """
-        return f"{self.account_id}@{self.valid_start.seconds}.{self.valid_start.nanos}{'?scheduled' if self.scheduled else ''}"
+        if self.valid_start is None:
+            base = str(self.account_id) if self.account_id else ""
+        else:
+            base = f"{self.account_id}@{self.valid_start.seconds}.{self.valid_start.nanos}"
+        return f"{base}{'?scheduled' if self.scheduled else ''}"
 
     def _to_proto(self) -> basic_types_pb2.TransactionID:
         """
@@ -179,6 +183,8 @@ class TransactionId:
         Returns:
             int: The hash value.
         """
+        if self.valid_start is None:
+            return hash((self.account_id, None, 0, self.scheduled))
         return hash((self.account_id, self.valid_start.seconds, self.valid_start.nanos, self.scheduled))
 
     def __str__(self) -> str:
