@@ -157,9 +157,16 @@ class TransactionId:
         Returns:
             bool: True if equal, False otherwise.
         """
+        if not isinstance(other, TransactionId):
+            return False
+        if self.valid_start is None or other.valid_start is None:
+            return (
+                self.valid_start is other.valid_start
+                and self.account_id == other.account_id
+                and self.scheduled == other.scheduled
+            )
         return (
-            isinstance(other, TransactionId)
-            and self.account_id == other.account_id
+            self.account_id == other.account_id
             and self.valid_start.seconds == other.valid_start.seconds
             and self.valid_start.nanos == other.valid_start.nanos
             and self.scheduled == other.scheduled
