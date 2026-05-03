@@ -136,8 +136,10 @@ class NodeAddress:
         public_key: str = node.get("public_key")
         account_id: AccountId = AccountId.from_string(node.get("node_account_id"))
         node_id: int = node.get("node_id")
-        # Get the hash from the node, remove the 0x prefix and convert to bytes
-        cert_hash: bytes = bytes.fromhex(node.get("node_cert_hash").removeprefix("0x"))
+        # Get the hash from the node, remove the 0x prefix and convert to bytes.
+        # Guard against missing or empty cert_hash to avoid AttributeError on None.
+        cert_hash_raw: str = node.get("node_cert_hash") or ""
+        cert_hash: bytes = bytes.fromhex(cert_hash_raw.removeprefix("0x")) if cert_hash_raw else b""
         description: str = node.get("description")
 
         endpoints: list[Endpoint] = [Endpoint.from_dict(endpoint) for endpoint in service_endpoints]
