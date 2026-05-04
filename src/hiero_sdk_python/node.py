@@ -111,6 +111,10 @@ class _Node:
         if self._channel is not None:
             self._channel.channel.close()
             self._channel = None
+        # Always reset the backoff and readmit time on close so the node
+        # is eligible for re-use immediately after reconnection
+        self._current_backoff = self._min_backoff
+        self._readmit_time = time.monotonic()
 
     def _get_channel(self):
         """
