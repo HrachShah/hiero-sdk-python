@@ -28,21 +28,23 @@ class KeyType(Enum):
 
 def get_key_from_string(key_string: str) -> Key:
     """Helper to convert the str value to Key."""
+    from hiero_sdk_python.crypto.key import KeyParseError
+
     key_bytes = bytes.fromhex(key_string)
 
     try:
         return Key.from_bytes(key_bytes)
-    except Exception:
+    except KeyParseError:
         pass
 
     try:
         return PublicKey.from_string_der(key_string)
-    except Exception:
+    except (ValueError, KeyParseError):
         pass
 
     try:
         return PrivateKey.from_string_der(key_string)
-    except Exception:
+    except (ValueError, KeyParseError):
         pass
 
     raise ValueError("Invalid key string")
