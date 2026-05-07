@@ -69,8 +69,9 @@ class AccountInfoQuery(Query):
             query.cryptoGetInfo.CopyFrom(crypto_info_query)
 
             return query
-        except Exception as e:
+        except (ValueError, AttributeError, KeyError, TypeError) as e:
             print(f"Exception in _make_request: {e}")
+            traceback.print_exc()
             raise
 
     def _get_method(self, channel: _Channel) -> _Method:
