@@ -74,7 +74,7 @@ class FileInfoQuery(Query):
             query.fileGetInfo.CopyFrom(file_info_query)
 
             return query
-        except Exception as e:
+        except (AttributeError, TypeError) as e:
             print(f"Exception in _make_request: {e}")
             traceback.print_exc()
             raise

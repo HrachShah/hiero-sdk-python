@@ -159,7 +159,7 @@ class TopicMessageQuery:
                         self._completion_handler()
                     return
 
-                except Exception as e:
+                except (AttributeError, TypeError) as e:
                     if subscription_handle.is_cancelled():
                         return
 

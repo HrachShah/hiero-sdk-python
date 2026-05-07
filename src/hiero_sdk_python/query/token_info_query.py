@@ -7,6 +7,7 @@ from hiero_sdk_python.hapi.services import query_pb2, response_pb2, token_get_in
 from hiero_sdk_python.query.query import Query
 from hiero_sdk_python.tokens.token_id import TokenId
 from hiero_sdk_python.tokens.token_info import TokenInfo
+import traceback
 
 
 class TokenInfoQuery(Query):
@@ -70,8 +71,9 @@ class TokenInfoQuery(Query):
             query.tokenGetInfo.CopyFrom(token_info_query)
 
             return query
-        except Exception as e:
+        except (AttributeError, TypeError) as e:
             print(f"Exception in _make_request: {e}")
+            traceback.print_exc()
             raise
 
     def _get_method(self, channel: _Channel) -> _Method:
