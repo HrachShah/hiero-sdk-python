@@ -68,7 +68,7 @@ class TokenNftInfoQuery(Query):
             query.tokenGetNftInfo.CopyFrom(nft_info_query)
 
             return query
-        except Exception as e:
+        except (ValueError, AttributeError, TypeError) as e:
             print(f"Exception in _make_request: {e}")
             traceback.print_exc()
             raise
