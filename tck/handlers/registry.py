@@ -76,7 +76,7 @@ def safe_dispatch(method_name: str, params: Any, request_id: str | int | None) -
         return dispatch(method_name, params)
     except JsonRpcError as e:
         return build_json_rpc_error_response(e, request_id)
-    except Exception as e:
+    except (RuntimeError, KeyError, AttributeError, OSError, IndexError) as e:
         error = JsonRpcError.internal_error(data=str(e))
         return build_json_rpc_error_response(error, request_id)
 
