@@ -5,6 +5,7 @@ from __future__ import annotations
 import secrets
 import time
 from typing import Any
+import json
 
 import requests
 
@@ -171,12 +172,11 @@ class Network:
         url: str = f"{base_url}/api/v1/network/nodes?limit=100&order=desc"
 
         try:
-            response: requests.Response = requests.get(url, timeout=30)  # Add 30 second timeout
+            response: requests.Response = requests.get(url, timeout=30)
             response.raise_for_status()
             data: dict[str, Any] = response.json()
 
             nodes: list[_Node] = []
-            # Process each node from the mirror node API response
             for node in data.get("nodes", []):
                 address_book: NodeAddress = NodeAddress._from_dict(node)
                 account_id: AccountId = address_book._account_id
@@ -185,7 +185,7 @@ class Network:
                 nodes.append(_Node(account_id, address, address_book))
 
             return nodes
-        except requests.RequestException as e:
+        except (requests.RequestException, json.JSONDecodeError, KeyError, TypeError) as e:
             print(f"Error fetching nodes from mirror node API: {e}")
             return []
 
