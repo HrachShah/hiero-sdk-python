@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import asyncio
 from functools import wraps
 
 from hiero_sdk_python.exceptions import MaxAttemptsError, PrecheckError, ReceiptStatusError
@@ -116,7 +117,9 @@ def handle_sdk_errors(func):
             logger.error(f"MaxAttemptsError (method: {func.__name__})")
             raise JsonRpcError.hiero_error(message=str(e)) from e
 
-        except Exception as e:
+        except (KeyboardInterrupt, asyncio.CancelledError):
+            raise
+        except (ValueError, TypeError, RuntimeError, KeyError, AttributeError) as e:
             logger.exception("Unhandled error in RPC handler")
             raise JsonRpcError.internal_error(message="Internal error") from e
 
