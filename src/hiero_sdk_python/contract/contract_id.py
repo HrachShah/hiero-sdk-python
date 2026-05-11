@@ -202,7 +202,7 @@ class ContractId(Key):
 
         try:
             proto = basic_types_pb2.ContractID.FromString(data)
-        except Exception as exc:
+        except ValueError as exc:
             raise ValueError("Failed to deserialize ContractId from bytes") from exc
 
         return cls._from_proto(proto)
