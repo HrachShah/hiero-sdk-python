@@ -144,7 +144,7 @@ class ContractId(Key):
             object.__setattr__(contract_id, "checksum", checksum)
             return contract_id
 
-        except Exception as e:
+        except (ValueError, TypeError, AttributeError) as e:
             raise ValueError(
                 f"Invalid contract ID string '{contract_id_str}'. Expected format 'shard.realm.contract'."
             ) from e
@@ -179,7 +179,7 @@ class ContractId(Key):
             # throw error internally if not valid evm_address
             evm_addr = EvmAddress.from_string(evm_address=evm_address)
             return cls(shard=shard, realm=realm, evm_address=evm_addr.address_bytes)
-        except Exception as e:
+        except (ValueError, TypeError, AttributeError) as e:
             raise ValueError(f"Invalid EVM address: {evm_address}") from e
 
     @classmethod
