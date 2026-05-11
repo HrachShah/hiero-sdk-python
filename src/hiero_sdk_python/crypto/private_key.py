@@ -430,7 +430,7 @@ class PrivateKey(Key):
 
         try:
             return ec.derive_private_key(private_int, ec.SECP256K1())
-        except Exception as exc:
+        except (ValueError, TypeError) as exc:
             raise ValueError(f"Failed to derive ECDSA private key: {exc}") from exc
 
     def to_proto_key(self) -> basic_types_pb2.Key:
