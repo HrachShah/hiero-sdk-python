@@ -464,7 +464,7 @@ class _Executable(ABC):
                 logger.trace("Executing gRPC call", "requestId", self._get_request_id())
                 response = _execute_method(method, proto_request, self._grpc_deadline)
 
-            except Exception as e:
+            except (grpc.RpcError, TimeoutError) as e:
                 if not self._should_retry_exponentially(e):
                     raise e
 
