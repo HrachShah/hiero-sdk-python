@@ -12,6 +12,7 @@ from hiero_sdk_python.hapi.mirror import consensus_service_pb2 as mirror_proto
 from hiero_sdk_python.hapi.services import basic_types_pb2, timestamp_pb2
 from hiero_sdk_python.transaction.transaction_id import TransactionId
 from hiero_sdk_python.utils.subscription_handle import SubscriptionHandle
+import grpc
 
 
 class TopicMessageQuery:
@@ -159,7 +160,7 @@ class TopicMessageQuery:
                         self._completion_handler()
                     return
 
-                except Exception as e:
+                except grpc.RpcError as e:
                     if subscription_handle.is_cancelled():
                         return
 
