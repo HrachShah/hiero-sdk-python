@@ -66,7 +66,12 @@ def dispatch(method_name: str, params: Any) -> Any:
 
     except JsonRpcError:
         raise
+    except (TypeError, NameError) as e:
+        # get_type_hints raises NameError for unresolvable type references, TypeError for invalid types
+        raise JsonRpcError.internal_error(data=str(e)) from e
     except Exception as e:
+        # Covers: asdict() on non-dataclass result, unexpected handler errors, as well as
+        # any edge case not covered above (e.g. from parse_json_params edge cases)
         raise JsonRpcError.internal_error(data=str(e)) from e
 
 
