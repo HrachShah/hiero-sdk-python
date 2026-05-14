@@ -48,7 +48,7 @@ def json_rpc_endpoint():
 
     try:
         request_json = request.get_json(force=True)
-    except Exception:
+    except (ValueError, TypeError, OSError):
         error = JsonRpcError.parse_error()
         return jsonify(build_json_rpc_error_response(error, None))
 
