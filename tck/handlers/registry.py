@@ -66,7 +66,7 @@ def dispatch(method_name: str, params: Any) -> Any:
 
     except JsonRpcError:
         raise
-    except Exception as e:
+    except (ValueError, TypeError, KeyError, IndexError) as e:
         raise JsonRpcError.internal_error(data=str(e)) from e
 
 
