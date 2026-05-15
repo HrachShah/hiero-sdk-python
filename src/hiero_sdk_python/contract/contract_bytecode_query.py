@@ -67,19 +67,15 @@ class ContractBytecodeQuery(Query):
         try:
             if not self.contract_id:
                 raise ValueError("Contract ID must be set before making the request.")
-
             query_header = self._make_request_header()
-
             contract_bytecode_query = contract_get_bytecode_pb2.ContractGetBytecodeQuery(
                 header=query_header,
                 contractID=self.contract_id._to_proto(),
             )
-
             query = query_pb2.Query()
             query.contractGetBytecode.CopyFrom(contract_bytecode_query)
-
             return query
-        except Exception as e:
+        except (ValueError, AttributeError) as e:
             print(f"Exception in _make_request: {e}")
             traceback.print_exc()
             raise
