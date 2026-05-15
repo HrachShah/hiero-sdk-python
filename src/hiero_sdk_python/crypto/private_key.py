@@ -187,7 +187,7 @@ class PrivateKey(Key):
             if private_int == 0:
                 return None
             return ec.derive_private_key(private_int, ec.SECP256K1())
-        except Exception:
+        except ValueError:
             return None
 
     @staticmethod
