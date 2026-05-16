@@ -121,10 +121,9 @@ def _fmt_ts(ts):
         # If it's an SDK Timestamp
         return ts.to_datetime().isoformat(sep=" ", timespec="seconds")
     except AttributeError:
-        # If it's already a datetime or something else printable
         try:
             return ts.isoformat(sep=" ", timespec="seconds")
-        except Exception:
+        except (AttributeError, TypeError):
             return str(ts)
 
 

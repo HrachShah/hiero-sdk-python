@@ -189,7 +189,7 @@ def _check_token_transfer_for_pair(record, token_id, operator_id, recipient_id):
         )
         # Validate shape and compare expected amounts in a single expression
         return isinstance(transfers, dict) and transfers.get(operator_id) == -1 and transfers.get(recipient_id) == 1
-    except Exception:
+    except (KeyError, TypeError):
         return False
 
 
