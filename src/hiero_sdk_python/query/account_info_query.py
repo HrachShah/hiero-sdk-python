@@ -64,12 +64,11 @@ class AccountInfoQuery(Query):
             crypto_info_query = crypto_get_info_pb2.CryptoGetInfoQuery()
             crypto_info_query.header.CopyFrom(query_header)
             crypto_info_query.accountID.CopyFrom(self.account_id._to_proto())
-
             query = query_pb2.Query()
             query.cryptoGetInfo.CopyFrom(crypto_info_query)
 
             return query
-        except Exception as e:
+        except (ValueError, AttributeError) as e:
             print(f"Exception in _make_request: {e}")
             raise
 

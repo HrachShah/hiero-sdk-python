@@ -183,7 +183,7 @@ class TransactionGetReceiptQuery(Query):
             query.transactionGetReceipt.CopyFrom(transaction_get_receipt)
 
             return query
-        except Exception as e:
+        except (ValueError, AttributeError) as e:
             print(f"Exception in _make_request: {e}")
             traceback.print_exc()
             raise
