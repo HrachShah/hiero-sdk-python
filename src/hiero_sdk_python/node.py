@@ -247,7 +247,7 @@ class _Node:
         except UnicodeDecodeError:
             return cert_hash.hex()
 
-    def _fetch_server_certificate_pem(self) -> bytes:
+    def _fetch_server_certificate_pem(self) -> bytes | None:
         """
         Perform a TLS handshake and retrieve the server certificate in PEM format.
 
