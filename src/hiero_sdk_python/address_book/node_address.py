@@ -55,8 +55,8 @@ class NodeAddress:
         self._account_id: AccountId = account_id
         self._node_id: int = node_id
         self._cert_hash: bytes = cert_hash
-        self._addresses: list[Endpoint] = addresses
-        self._description: str = description
+        self._addresses: list[Endpoint] = addresses if addresses is not None else []
+        self._description: str | None = description
 
     @classmethod
     def _from_proto(cls, node_address_proto: NodeAddressProto) -> NodeAddress:
@@ -116,8 +116,9 @@ class NodeAddress:
             str: The string representation of the NodeAddress.
         """
         addresses_str: str = ""
-        for address in self._addresses:
-            addresses_str += str(address)
+        if self._addresses:
+            for address in self._addresses:
+                addresses_str += str(address)
         cert_hash_str: str = self._cert_hash.hex()
         node_id_str: str = str(self._node_id)
         account_id_str: str = str(self._account_id)

@@ -32,11 +32,11 @@ class Endpoint:
 
         Args:
             address (bytes, optional): The IP address in bytes format.
-            port (int, optional): The port number.
+            port (int | None, optional): The port number.
             domain_name (str, optional): The domain name.
         """
         self._address: bytes = address
-        self._port: int = port
+        self._port: int | None = port
         self._domain_name: str = domain_name
 
     def set_address(self, address: bytes) -> Endpoint:
