@@ -69,8 +69,6 @@ class TokenNftInfoQuery(Query):
 
             return query
         except Exception as e:
-            print(f"Exception in _make_request: {e}")
-            traceback.print_exc()
             raise
 
     def _get_method(self, channel: _Channel) -> _Method:
