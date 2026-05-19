@@ -414,7 +414,7 @@ class _Executable(ABC):
         """
         self._resolve_execution_config(client, timeout)
 
-        err_persistant = None
+        err_persistent = None
         tx_id = getattr(self, "transaction_id", None)
 
         logger = client.logger
@@ -456,7 +456,7 @@ class _Executable(ABC):
             proto_request = self._make_request()
 
             if not node.is_healthy():
-                self._handle_unhealthy_node(proto_request, attempt, logger, err_persistant)
+                self._handle_unhealthy_node(proto_request, attempt, logger, err_persistent)
                 continue
 
             # Execute the GRPC call
@@ -469,7 +469,7 @@ class _Executable(ABC):
                     raise e
 
                 client.network._increase_backoff(node)
-                err_persistant = e
+                err_persistent = e
                 self._advance_node_index()
                 continue
 
@@ -501,13 +501,13 @@ class _Executable(ABC):
                         client.update_network()
 
                     # If we should retry, wait for the backoff period and try again
-                    err_persistant = status_error
+                    err_persistent = status_error
                     _delay_for_attempt(
                         self._get_request_id(),
                         self._calculate_backoff(attempt),
                         attempt,
                         logger,
-                        err_persistant,
+                        err_persistent,
                     )
                     self._advance_node_index()
                     continue
@@ -525,12 +525,12 @@ class _Executable(ABC):
             "requestId",
             self._get_request_id(),
             "last exception being",
-            err_persistant,
+            err_persistent,
         )
         raise MaxAttemptsError(
             "Exceeded maximum attempts or request timeout",
             self.node_account_id,
-            err_persistant,
+            err_persistent,
         )
 
 
