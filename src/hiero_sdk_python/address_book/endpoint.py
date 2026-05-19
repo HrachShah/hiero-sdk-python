@@ -26,7 +26,7 @@ class Endpoint:
     This class is used to handle service endpoints in the Hedera network.
     """
 
-    def __init__(self, address: bytes = None, port: int = None, domain_name: str = None) -> None:
+    def __init__(self, address: bytes | None = None, port: int = None, domain_name: str | None = None) -> None:
         """
         Initialize a new Endpoint instance.
 
