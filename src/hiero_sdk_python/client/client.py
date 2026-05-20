@@ -48,8 +48,8 @@ class Client:
         Initializes the Client with a given network configuration.
         If no network is provided, it defaults to a new Network instance.
         """
-        self.operator_account_id: AccountId = None
-        self.operator_private_key: PrivateKey = None
+        self.operator_account_id: AccountId | None = None
+        self.operator_private_key: PrivateKey | None = None
 
         if network is None:
             network = Network()
