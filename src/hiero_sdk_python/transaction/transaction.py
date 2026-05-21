@@ -531,10 +531,10 @@ class Transaction(_Executable):
         Ensures the transaction is not frozen before allowing modifications.
 
         Raises:
-            Exception: If the transaction has already been frozen.
+            ValueError: If the transaction has already been frozen.
         """
         if self._transaction_body_bytes:
-            raise Exception("Transaction is immutable; it has been frozen.")
+            raise ValueError("Transaction is immutable; it has been frozen.")
 
     def _require_frozen(self) -> None:
         """
@@ -544,10 +544,10 @@ class Transaction(_Executable):
         has been set.
 
         Raises:
-            Exception: If the transaction has not been frozen yet.
+            ValueError: If the transaction has not been frozen yet.
         """
         if not self._transaction_body_bytes:
-            raise Exception("Transaction is not frozen")
+            raise ValueError("Transaction is not frozen")
 
     def set_transaction_memo(self, memo):
         """
