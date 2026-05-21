@@ -173,7 +173,7 @@ class PrivateKey(Key):
         """
         try:
             return ed25519.Ed25519PrivateKey.from_private_bytes(key_bytes)
-        except Exception:
+        except ValueError:
             return None
 
     @staticmethod
@@ -221,7 +221,7 @@ class PrivateKey(Key):
             raise ValueError("Ed25519 private key seed must be 32 bytes.")
         try:
             return cls(ed25519.Ed25519PrivateKey.from_private_bytes(seed_32))
-        except Exception as e:
+        except ValueError as e:
             raise ValueError(f"Could not load Ed25519 private key from seed: {e}") from e
 
     @classmethod
