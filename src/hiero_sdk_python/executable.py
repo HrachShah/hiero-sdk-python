@@ -584,4 +584,4 @@ def _execute_method(method, proto_request, timeout: float):
         return method.transaction(proto_request, timeout=timeout)
     if method.query is not None:
         return method.query(proto_request, timeout=timeout)
-    raise Exception("No method to execute")
+    raise ValueError("Neither a transaction nor query method is available to execute")
