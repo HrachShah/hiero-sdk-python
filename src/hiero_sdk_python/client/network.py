@@ -173,21 +173,25 @@ class Network:
         try:
             response: requests.Response = requests.get(url, timeout=30)  # Add 30 second timeout
             response.raise_for_status()
-            data: dict[str, Any] = response.json()
-
-            nodes: list[_Node] = []
-            # Process each node from the mirror node API response
-            for node in data.get("nodes", []):
-                address_book: NodeAddress = NodeAddress._from_dict(node)
-                account_id: AccountId = address_book._account_id
-                address: str = str(address_book._addresses[0])
-
-                nodes.append(_Node(account_id, address, address_book))
-
-            return nodes
+            try:
+                data = response.json()
+            except ValueError:
+                print(f"Mirror node returned non-JSON response for {url}: {response.text[:200]}")
+                return []
         except requests.RequestException as e:
             print(f"Error fetching nodes from mirror node API: {e}")
             return []
+
+        nodes: list[_Node] = []
+        # Process each node from the mirror node API response
+        for node in data.get("nodes", []):
+            address_book: NodeAddress = NodeAddress._from_dict(node)
+            account_id: AccountId = address_book._account_id
+            address: str = str(address_book._addresses[0])
+
+            nodes.append(_Node(account_id, address, address_book))
+
+        return nodes
 
     def _fetch_nodes_from_default_nodes(self) -> list[_Node]:
         """Fetches the list of nodes from the default nodes for the network."""
