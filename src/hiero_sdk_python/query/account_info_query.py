@@ -41,37 +41,29 @@ class AccountInfoQuery(Query):
         self.account_id = account_id
         return self
 
-    def _make_request(self):
+    def _make_request(self) -> query_pb2.Query:
         """
-        Constructs the protobuf request for the query.
-
-        Builds a CryptoGetInfoQuery protobuf message with the
-        appropriate header and account ID.
+        Constructs the protobuf request for account info query.
 
         Returns:
-            Query: The protobuf query message.
+            Query: The protobuf Query message.
 
         Raises:
             ValueError: If the account ID is not set.
-            Exception: If any other error occurs during request construction.
         """
-        try:
-            if not self.account_id:
-                raise ValueError("Account ID must be set before making the request.")
+        if not self.account_id:
+            raise ValueError("Account ID must be set before making the request.")
 
-            query_header = self._make_request_header()
+        query_header = self._make_request_header()
 
-            crypto_info_query = crypto_get_info_pb2.CryptoGetInfoQuery()
-            crypto_info_query.header.CopyFrom(query_header)
-            crypto_info_query.accountID.CopyFrom(self.account_id._to_proto())
+        crypto_info_query = crypto_get_info_pb2.CryptoGetInfoQuery()
+        crypto_info_query.header.CopyFrom(query_header)
+        crypto_info_query.accountID.CopyFrom(self.account_id._to_proto())
 
-            query = query_pb2.Query()
-            query.cryptoGetInfo.CopyFrom(crypto_info_query)
+        query = query_pb2.Query()
+        query.cryptoGetInfo.CopyFrom(crypto_info_query)
 
-            return query
-        except Exception as e:
-            print(f"Exception in _make_request: {e}")
-            raise
+        return query
 
     def _get_method(self, channel: _Channel) -> _Method:
         """

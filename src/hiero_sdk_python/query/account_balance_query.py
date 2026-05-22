@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import traceback
 from typing import Any
 
 from hiero_sdk_python.account.account_balance import AccountBalance
@@ -87,34 +86,28 @@ class CryptoGetAccountBalanceQuery(Query):
             ValueError: If both the account ID and contract ID are not set.
             ValueError: If both the account ID and contract ID are set.
             AttributeError: If the Query protobuf structure is invalid.
-            Exception: If any other error occurs during request construction.
         """
-        try:
-            if not self.account_id and not self.contract_id:
-                raise ValueError("Either account_id or contract_id must be set before making the request.")
+        if not self.account_id and not self.contract_id:
+            raise ValueError("Either account_id or contract_id must be set before making the request.")
 
-            if self.account_id and self.contract_id:
-                raise ValueError("Specify either account_id or contract_id, not both.")
+        if self.account_id and self.contract_id:
+            raise ValueError("Specify either account_id or contract_id, not both.")
 
-            query_header = self._make_request_header()
-            crypto_get_balance = crypto_get_account_balance_pb2.CryptoGetAccountBalanceQuery()
-            crypto_get_balance.header.CopyFrom(query_header)
+        query_header = self._make_request_header()
+        crypto_get_balance = crypto_get_account_balance_pb2.CryptoGetAccountBalanceQuery()
+        crypto_get_balance.header.CopyFrom(query_header)
 
-            if self.account_id:
-                crypto_get_balance.accountID.CopyFrom(self.account_id._to_proto())
-            else:
-                crypto_get_balance.contractID.CopyFrom(self.contract_id._to_proto())
+        if self.account_id:
+            crypto_get_balance.accountID.CopyFrom(self.account_id._to_proto())
+        else:
+            crypto_get_balance.contractID.CopyFrom(self.contract_id._to_proto())
 
-            query = query_pb2.Query()
-            if not hasattr(query, "cryptogetAccountBalance"):
-                raise AttributeError("Query object has no attribute 'cryptogetAccountBalance'")
-            query.cryptogetAccountBalance.CopyFrom(crypto_get_balance)
+        query = query_pb2.Query()
+        if not hasattr(query, "cryptogetAccountBalance"):
+            raise AttributeError("Query object has no attribute 'cryptogetAccountBalance'")
+        query.cryptogetAccountBalance.CopyFrom(crypto_get_balance)
 
-            return query
-        except Exception as e:
-            print(f"Exception in _make_request: {e}")
-            traceback.print_exc()
-            raise
+        return query
 
     def _get_method(self, channel: _Channel) -> _Method:
         """

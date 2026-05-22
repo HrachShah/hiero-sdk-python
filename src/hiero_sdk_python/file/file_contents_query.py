@@ -59,25 +59,20 @@ class FileContentsQuery(Query):
 
         Raises:
             ValueError: If the file ID is not set.
-            Exception: If any other error occurs during request construction.
         """
-        try:
-            if not self.file_id:
-                raise ValueError("File ID must be set before making the request.")
+        if not self.file_id:
+            raise ValueError("File ID must be set before making the request.")
 
-            query_header = self._make_request_header()
+        query_header = self._make_request_header()
 
-            file_contents_query = file_get_contents_pb2.FileGetContentsQuery()
-            file_contents_query.header.CopyFrom(query_header)
-            file_contents_query.fileID.CopyFrom(self.file_id._to_proto())
+        file_contents_query = file_get_contents_pb2.FileGetContentsQuery()
+        file_contents_query.header.CopyFrom(query_header)
+        file_contents_query.fileID.CopyFrom(self.file_id._to_proto())
 
-            query = query_pb2.Query()
-            query.fileGetContents.CopyFrom(file_contents_query)
+        query = query_pb2.Query()
+        query.fileGetContents.CopyFrom(file_contents_query)
 
-            return query
-        except Exception as e:
-            print(f"Exception in _make_request: {e}")
-            raise
+        return query
 
     def _get_method(self, channel: _Channel) -> _Method:
         """

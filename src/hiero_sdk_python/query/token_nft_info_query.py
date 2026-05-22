@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import traceback
 
 from hiero_sdk_python.channels import _Channel
 from hiero_sdk_python.client.client import Client
@@ -42,36 +41,28 @@ class TokenNftInfoQuery(Query):
 
     def _make_request(self) -> query_pb2.Query:
         """
-        Constructs the protobuf request for the query.
-
         Builds a TokenGetNftInfoQuery protobuf message with the
-        appropriate header and nft ID.
+        appropriate header and NFT ID.
 
         Returns:
             Query: The protobuf query message.
 
         Raises:
             ValueError: If the nft ID is not set.
-            Exception: If any other error occurs during request construction.
         """
-        try:
-            if not self.nft_id:
-                raise ValueError("NFT ID must be set before making the request.")
+        if not self.nft_id:
+            raise ValueError("NFT ID must be set before making the request.")
 
-            query_header = self._make_request_header()
+        query_header = self._make_request_header()
 
-            nft_info_query = token_get_nft_info_pb2.TokenGetNftInfoQuery()
-            nft_info_query.header.CopyFrom(query_header)
-            nft_info_query.nftID.CopyFrom(self.nft_id._to_proto())
+        nft_info_query = token_get_nft_info_pb2.TokenGetNftInfoQuery()
+        nft_info_query.header.CopyFrom(query_header)
+        nft_info_query.nftID.CopyFrom(self.nft_id._to_proto())
 
-            query = query_pb2.Query()
-            query.tokenGetNftInfo.CopyFrom(nft_info_query)
+        query = query_pb2.Query()
+        query.tokenGetNftInfo.CopyFrom(nft_info_query)
 
-            return query
-        except Exception as e:
-            print(f"Exception in _make_request: {e}")
-            traceback.print_exc()
-            raise
+        return query
 
     def _get_method(self, channel: _Channel) -> _Method:
         """

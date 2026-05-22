@@ -4,7 +4,6 @@
 
 from __future__ import annotations
 
-import traceback
 
 from hiero_sdk_python.account.account_id import AccountId
 from hiero_sdk_python.channels import _Channel
@@ -139,30 +138,24 @@ class ContractCallQuery(Query):
 
         Raises:
             ValueError: If the contract ID is not set.
-            Exception: If any other error occurs during request construction.
         """
-        try:
-            if not self.contract_id:
-                raise ValueError("Contract ID must be set before making the request.")
+        if not self.contract_id:
+            raise ValueError("Contract ID must be set before making the request.")
 
-            query_header = self._make_request_header()
+        query_header = self._make_request_header()
 
-            contract_call_query = contract_call_local_pb2.ContractCallLocalQuery(
-                header=query_header,
-                contractID=self.contract_id._to_proto() if self.contract_id else None,
-                gas=self.gas,
-                maxResultSize=self.max_result_size,
-                functionParameters=self.function_parameters,
-                sender_id=self.sender._to_proto() if self.sender else None,
-            )
-            query = query_pb2.Query()
-            query.contractCallLocal.CopyFrom(contract_call_query)
+        contract_call_query = contract_call_local_pb2.ContractCallLocalQuery(
+            header=query_header,
+            contractID=self.contract_id._to_proto() if self.contract_id else None,
+            gas=self.gas,
+            maxResultSize=self.max_result_size,
+            functionParameters=self.function_parameters,
+            sender_id=self.sender._to_proto() if self.sender else None,
+        )
+        query = query_pb2.Query()
+        query.contractCallLocal.CopyFrom(contract_call_query)
 
-            return query
-        except Exception as e:
-            print(f"Exception in _make_request: {e}")
-            traceback.print_exc()
-            raise
+        return query
 
     def _get_method(self, channel: _Channel) -> _Method:
         """

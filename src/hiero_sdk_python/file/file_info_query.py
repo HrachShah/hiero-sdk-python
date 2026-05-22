@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import traceback
 
 from hiero_sdk_python.channels import _Channel
 from hiero_sdk_python.client.client import Client
@@ -58,26 +57,20 @@ class FileInfoQuery(Query):
 
         Raises:
             ValueError: If the file ID is not set.
-            Exception: If any other error occurs during request construction.
         """
-        try:
-            if not self.file_id:
-                raise ValueError("File ID must be set before making the request.")
+        if not self.file_id:
+            raise ValueError("File ID must be set before making the request.")
 
-            query_header = self._make_request_header()
+        query_header = self._make_request_header()
 
-            file_info_query = file_get_info_pb2.FileGetInfoQuery()
-            file_info_query.header.CopyFrom(query_header)
-            file_info_query.fileID.CopyFrom(self.file_id._to_proto())
+        file_info_query = file_get_info_pb2.FileGetInfoQuery()
+        file_info_query.header.CopyFrom(query_header)
+        file_info_query.fileID.CopyFrom(self.file_id._to_proto())
 
-            query = query_pb2.Query()
-            query.fileGetInfo.CopyFrom(file_info_query)
+        query = query_pb2.Query()
+        query.fileGetInfo.CopyFrom(file_info_query)
 
-            return query
-        except Exception as e:
-            print(f"Exception in _make_request: {e}")
-            traceback.print_exc()
-            raise
+        return query
 
     def _get_method(self, channel: _Channel) -> _Method:
         """

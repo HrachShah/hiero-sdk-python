@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import traceback
 
 from hiero_sdk_python.channels import _Channel
 from hiero_sdk_python.client.client import Client
@@ -150,10 +149,7 @@ class TransactionGetReceiptQuery(Query):
 
     def _make_request(self) -> query_pb2.Query:
         """
-        Constructs the protobuf request for the transaction receipt query.
-
-        Builds a TransactionGetReceiptQuery protobuf message with the
-        appropriate header and transaction ID.
+        Constructs the protobuf Query object for a transaction receipt query.
 
         Returns:
             query_pb2.Query: The protobuf Query object containing the transaction receipt query.
@@ -161,32 +157,26 @@ class TransactionGetReceiptQuery(Query):
         Raises:
             ValueError: If the transaction ID is not set.
             AttributeError: If the Query protobuf structure is invalid.
-            Exception: If any other error occurs during request construction.
         """
-        try:
-            if not self.transaction_id:
-                raise ValueError("Transaction ID must be set before making the request.")
+        if not self.transaction_id:
+            raise ValueError("Transaction ID must be set before making the request.")
 
-            query_header = query_header_pb2.QueryHeader()
-            query_header.responseType = query_header_pb2.ResponseType.ANSWER_ONLY
+        query_header = query_header_pb2.QueryHeader()
+        query_header.responseType = query_header_pb2.ResponseType.ANSWER_ONLY
 
-            transaction_get_receipt = transaction_get_receipt_pb2.TransactionGetReceiptQuery()
-            transaction_get_receipt.header.CopyFrom(query_header)
-            transaction_get_receipt.transactionID.CopyFrom(self.transaction_id._to_proto())
+        transaction_get_receipt = transaction_get_receipt_pb2.TransactionGetReceiptQuery()
+        transaction_get_receipt.header.CopyFrom(query_header)
+        transaction_get_receipt.transactionID.CopyFrom(self.transaction_id._to_proto())
 
-            transaction_get_receipt.include_child_receipts = self.include_children
-            transaction_get_receipt.includeDuplicates = self.include_duplicates
+        transaction_get_receipt.include_child_receipts = self.include_children
+        transaction_get_receipt.includeDuplicates = self.include_duplicates
 
-            query = query_pb2.Query()
-            if not hasattr(query, "transactionGetReceipt"):
-                raise AttributeError("Query object has no attribute 'transactionGetReceipt'")
-            query.transactionGetReceipt.CopyFrom(transaction_get_receipt)
+        query = query_pb2.Query()
+        if not hasattr(query, "transactionGetReceipt"):
+            raise AttributeError("Query object has no attribute 'transactionGetReceipt'")
+        query.transactionGetReceipt.CopyFrom(transaction_get_receipt)
 
-            return query
-        except Exception as e:
-            print(f"Exception in _make_request: {e}")
-            traceback.print_exc()
-            raise
+        return query
 
     def _get_method(self, channel: _Channel) -> _Method:
         """

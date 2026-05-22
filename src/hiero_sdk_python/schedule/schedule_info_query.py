@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import traceback
 
 from hiero_sdk_python.channels import _Channel
 from hiero_sdk_python.client.client import Client
@@ -44,8 +43,6 @@ class ScheduleInfoQuery(Query):
 
     def _make_request(self) -> query_pb2.Query:
         """
-        Constructs the protobuf request for the query.
-
         Builds a ScheduleGetInfoQuery protobuf message with the
         appropriate header and schedule ID.
 
@@ -54,26 +51,20 @@ class ScheduleInfoQuery(Query):
 
         Raises:
             ValueError: If the schedule ID is not set.
-            Exception: If any other error occurs during request construction.
         """
-        try:
-            if not self.schedule_id:
-                raise ValueError("Schedule ID must be set before making the request.")
+        if not self.schedule_id:
+            raise ValueError("Schedule ID must be set before making the request.")
 
-            query_header = self._make_request_header()
+        query_header = self._make_request_header()
 
-            schedule_info_query = schedule_get_info_pb2.ScheduleGetInfoQuery()
-            schedule_info_query.header.CopyFrom(query_header)
-            schedule_info_query.scheduleID.CopyFrom(self.schedule_id._to_proto())
+        schedule_info_query = schedule_get_info_pb2.ScheduleGetInfoQuery()
+        schedule_info_query.header.CopyFrom(query_header)
+        schedule_info_query.scheduleID.CopyFrom(self.schedule_id._to_proto())
 
-            query = query_pb2.Query()
-            query.scheduleGetInfo.CopyFrom(schedule_info_query)
+        query = query_pb2.Query()
+        query.scheduleGetInfo.CopyFrom(schedule_info_query)
 
-            return query
-        except Exception as e:
-            print(f"Exception in _make_request: {e}")
-            traceback.print_exc()
-            raise
+        return query
 
     def _get_method(self, channel: _Channel) -> _Method:
         """

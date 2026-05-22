@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import traceback
 from typing import Any
 
 from hiero_sdk_python.channels import _Channel
@@ -74,8 +73,6 @@ class TopicInfoQuery(Query):
 
     def _make_request(self) -> query_pb2.Query:
         """
-        Constructs the protobuf request for the query.
-
         Builds a ConsensusGetTopicInfoQuery protobuf message with the
         appropriate header and topic ID.
 
@@ -84,27 +81,20 @@ class TopicInfoQuery(Query):
 
         Raises:
             ValueError: If the topic ID is not set.
-            Exception: If any other error occurs during request construction.
         """
-        try:
-            if not self.topic_id:
-                raise ValueError("Topic ID must be set before making the request.")
+        if not self.topic_id:
+            raise ValueError("Topic ID must be set before making the request.")
 
-            query_header = self._make_request_header()
+        query_header = self._make_request_header()
 
-            topic_info_query = consensus_get_topic_info_pb2.ConsensusGetTopicInfoQuery()
-            topic_info_query.header.CopyFrom(query_header)
-            topic_info_query.topicID.CopyFrom(self.topic_id._to_proto())
+        topic_info_query = consensus_get_topic_info_pb2.ConsensusGetTopicInfoQuery()
+        topic_info_query.header.CopyFrom(query_header)
+        topic_info_query.topicID.CopyFrom(self.topic_id._to_proto())
 
-            query = query_pb2.Query()
-            query.consensusGetTopicInfo.CopyFrom(topic_info_query)
+        query = query_pb2.Query()
+        query.consensusGetTopicInfo.CopyFrom(topic_info_query)
 
-            return query
-
-        except Exception as e:
-            print(f"Exception in _make_request: {e}")
-            traceback.print_exc()
-            raise
+        return query
 
     def _get_method(self, channel: _Channel) -> _Method:
         """
