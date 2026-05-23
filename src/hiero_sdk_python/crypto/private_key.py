@@ -173,7 +173,7 @@ class PrivateKey(Key):
         """
         try:
             return ed25519.Ed25519PrivateKey.from_private_bytes(key_bytes)
-        except Exception:
+        except ValueError:
             return None
 
     @staticmethod
@@ -187,7 +187,7 @@ class PrivateKey(Key):
             if private_int == 0:
                 return None
             return ec.derive_private_key(private_int, ec.SECP256K1())
-        except Exception:
+        except ValueError:
             return None
 
     @staticmethod
@@ -199,7 +199,7 @@ class PrivateKey(Key):
         # Try to parse the key as a legacy ECDSA key first
         try:
             return PrivateKey._parse_legacy_ecdsa_der_key(key_bytes)
-        except Exception:
+        except ValueError:
             pass
 
         try:
@@ -211,7 +211,7 @@ class PrivateKey(Key):
             if isinstance(private_key, ec.EllipticCurvePrivateKey) and isinstance(private_key.curve, ec.SECP256K1):
                 return private_key
             return None
-        except Exception:
+        except (TypeError, ValueError, OSError):
             return None
 
     @classmethod
@@ -249,12 +249,12 @@ class PrivateKey(Key):
         try:
             private_key = PrivateKey._parse_legacy_ecdsa_der_key(der_data)
             return cls(private_key)
-        except Exception:
+        except ValueError:
             pass
 
         try:
             private_key = serialization.load_der_private_key(der_data, password=None)
-        except Exception as e:
+        except (TypeError, ValueError, OSError) as e:
             raise ValueError(f"Could not parse DER private key: {e}") from e
 
         if isinstance(private_key, ed25519.Ed25519PrivateKey):
