@@ -98,7 +98,7 @@ class AccountId:
             account_id.__checksum = checksum
 
             return account_id
-        except Exception as e:
+        except (ValueError, IndexError) as e:
             alias_match = ALIAS_REGEX.match(account_id_str)
 
             if alias_match:
