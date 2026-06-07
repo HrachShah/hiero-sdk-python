@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import traceback
-
 from hiero_sdk_python.account.account_id import AccountId
 from hiero_sdk_python.channels import _Channel
 from hiero_sdk_python.client.client import Client
@@ -12,8 +10,11 @@ from hiero_sdk_python.hapi.services import crypto_get_account_records_pb2, query
 from hiero_sdk_python.hapi.services.crypto_get_account_records_pb2 import (
     CryptoGetAccountRecordsResponse,
 )
+from hiero_sdk_python.logger.logger import get_logger
 from hiero_sdk_python.query.query import Query
 from hiero_sdk_python.transaction.transaction_record import TransactionRecord
+
+logger = get_logger()
 
 
 class AccountRecordsQuery(Query):
@@ -76,8 +77,7 @@ class AccountRecordsQuery(Query):
 
             return query
         except Exception as e:
-            print(f"Exception in _make_request: {e}")
-            traceback.print_exc()
+            logger.error("Exception in _make_request", e)
             raise
 
     def _get_method(self, channel: _Channel) -> _Method:
