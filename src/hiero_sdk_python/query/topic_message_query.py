@@ -4,6 +4,7 @@ import threading
 import time
 from collections.abc import Callable
 from datetime import datetime
+import grpc
 
 from hiero_sdk_python.client.client import Client
 from hiero_sdk_python.consensus.topic_id import TopicId
@@ -159,7 +160,7 @@ class TopicMessageQuery:
                         self._completion_handler()
                     return
 
-                except Exception as e:
+                except (grpc.RpcError, OSError, ValueError, TypeError, AttributeError) as e:
                     if subscription_handle.is_cancelled():
                         return
 
