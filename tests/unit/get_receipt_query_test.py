@@ -348,3 +348,25 @@ def test_transaction_receipt_query_should_raise_receipt_error(transaction_id):
             query.execute(client)
 
         assert e.value.status == ResponseCode.INVALID_SIGNATURE
+
+
+def test_transaction_get_receipt_query_logs_errors_through_sdk_logger(caplog):
+    """When _make_request raises, the SDK logger should capture the message
+    instead of writing to stdout, and the exception should still propagate so
+    callers see the underlying ValueError. This pins the behaviour switch away
+    from print() and traceback.print_exc() in transaction_get_receipt_query."""
+    import logging
+
+    from hiero_sdk_python.query.transaction_get_receipt_query import (
+        logger as receipt_query_logger,
+    )
+
+    caplog.set_level(logging.ERROR, logger=receipt_query_logger.name)
+
+    query = TransactionGetReceiptQuery()
+
+    with pytest.raises(ValueError, match="Transaction ID must be set"):
+        query._make_request()
+
+    error_records = [r for r in caplog.records if r.levelno == logging.ERROR]
+    assert any("Exception in _make_request" in r.getMessage() for r in error_records)
