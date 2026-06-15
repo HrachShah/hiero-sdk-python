@@ -101,7 +101,19 @@ class TopicId:
             object.__setattr__(topic_id, "checksum", checksum)
 
             return topic_id
-        except Exception as e:
+        except (ValueError, TypeError) as e:
+            # parse_from_string raises ValueError for an address that
+            # doesn't match the `shard.realm.num[-checksum]` regex.
+            # int() on the captured digit strings raises ValueError for a
+            # non-numeric substring (the regex already disallows this, so
+            # only a future regex change could regress it) and TypeError
+            # if shard/realm/num are not strings (e.g. parse_from_string
+            # is called with a list or int by mistake). Catching the bare
+            # Exception was masking real bugs in the regex or constructor
+            # (AttributeError on a typo'd attribute, NameError on a
+            # removed import, RecursionError on a self-referential
+            # constructor) and turning them into a vague 'Invalid topic
+            # ID string' ValueError that hides the real traceback.
             raise ValueError(f"Invalid topic ID string '{topic_id_str}'. Expected format 'shard.realm.num'.") from e
 
     def validate_checksum(self, client: Client) -> None:
