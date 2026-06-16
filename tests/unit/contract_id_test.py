@@ -346,6 +346,19 @@ def test_validate_checksum_failure(client):
         contract_id.validate_checksum(client)
 
 
+def test_validate_checksum_with_evm_address(client):
+    """Should raise a clear ValueError when validate_checksum is called on an evm_address-constructed ContractId."""
+    contract_id = ContractId.from_string(
+        "0.0.abcdef0123456789abcdef0123456789abcdef01"
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="validate_checksum cannot be applied to ContractId with evm_address",
+    ):
+        contract_id.validate_checksum(client)
+
+
 def test_str_representation_with_evm_address():
     """Should return str representing with evm_address"""
     contract_id = ContractId.from_string("0.0.abcdef0123456789abcdef0123456789abcdef01")

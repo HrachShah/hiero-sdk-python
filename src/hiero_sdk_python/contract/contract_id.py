@@ -318,6 +318,9 @@ class ContractId(Key):
             ValueError: If the checksum is present but invalid or does not
                 match the client's network.
         """
+        if self.evm_address is not None:
+            raise ValueError("validate_checksum cannot be applied to ContractId with evm_address")
+
         validate_checksum(
             self.shard,
             self.realm,
