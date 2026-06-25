@@ -106,3 +106,40 @@ def test_logger_respects_level(capsys):
     assert "info message" in captured.out
     assert "warning message" in captured.out
     assert "error message" in captured.out
+
+def test_from_env_unset_returns_error(monkeypatch):
+    """from_env returns ERROR when LOG_LEVEL is not set."""
+    monkeypatch.delenv("LOG_LEVEL", raising=False)
+    assert LogLevel.from_env() == LogLevel.ERROR
+
+
+def test_from_env_empty_returns_error(monkeypatch):
+    """from_env returns ERROR when LOG_LEVEL is set to an empty string."""
+    monkeypatch.setenv("LOG_LEVEL", "")
+    assert LogLevel.from_env() == LogLevel.ERROR
+
+
+def test_from_env_invalid_returns_error(monkeypatch):
+    """from_env returns ERROR (does not raise) when LOG_LEVEL is invalid.
+    
+    Client.__init__ calls LogLevel.from_env() during construction. Before
+    this fix, a typo in the user's shell environment (LOG_LEVEL=foo)
+    raised ValueError out of Client.__init__, blocking instantiation for
+    any code path that needed a Client. The fix logs a warning and falls
+    back to ERROR so the SDK remains usable while the user notices and
+    corrects their environment variable.
+    """
+    monkeypatch.setenv("LOG_LEVEL", "foo")
+    assert LogLevel.from_env() == LogLevel.ERROR
+
+
+def test_from_env_valid_returns_level(monkeypatch):
+    """from_env returns the matching level for a valid LOG_LEVEL value."""
+    monkeypatch.setenv("LOG_LEVEL", "WARNING")
+    assert LogLevel.from_env() == LogLevel.WARNING
+
+
+def test_from_env_valid_lowercase_returns_level(monkeypatch):
+    """from_env lowercases names so 'warning' and 'WARNING' both work."""
+    monkeypatch.setenv("LOG_LEVEL", "warning")
+    assert LogLevel.from_env() == LogLevel.WARNING

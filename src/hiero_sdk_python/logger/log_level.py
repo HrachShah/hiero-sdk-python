@@ -53,10 +53,22 @@ class LogLevel(IntEnum):
     @classmethod
     def from_env(cls) -> LogLevel:
         """
-        Get log level from environment variable.
+        Get log level from the ``LOG_LEVEL`` environment variable.
+
+        Returns the parsed level when ``LOG_LEVEL`` is set to a recognised
+        name (case-insensitive, e.g. ``INFO``, ``debug``). When the
+        variable is unset, empty, or set to a name that is not a member
+        of :class:`LogLevel`, falls back to :attr:`LogLevel.ERROR` rather
+        than raising, so a stray ``LOG_LEVEL`` from another tool in the
+        same shell does not break ``Client()`` construction.
 
         Returns:
-            LogLevel: The LogLevel enum value
+            LogLevel: The resolved log level.
         """
         level_str = os.getenv("LOG_LEVEL")
-        return cls.from_string(level_str)
+        if not level_str:
+            return cls.ERROR
+        try:
+            return cls.from_string(level_str)
+        except ValueError:
+            return cls.ERROR
