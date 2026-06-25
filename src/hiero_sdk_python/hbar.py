@@ -177,10 +177,17 @@ class Hbar:
         if not match:
             raise ValueError(f"Invalid Hbar format: '{amount}'")
 
-        parts = amount.split(" ")
-        value = Decimal(parts[0])
-        unit = HbarUnit.from_string(parts[1]) if len(parts) == 2 else unit
-        return cls(value, unit=unit)
+        value_str = match.group(1)
+        unit_symbol = match.group(2)
+        parsed_unit = HbarUnit.from_string(unit_symbol.strip()) if unit_symbol else unit
+        value = Decimal(value_str)
+
+        if parsed_unit == HbarUnit.TINYBAR:
+            if value != value.to_integral_value():
+                raise ValueError("Fractional tinybar value not allowed")
+            return cls.from_tinybars(int(value))
+
+        return cls(value, unit=parsed_unit)
 
     def __str__(self) -> str:
         return f"{self.to_hbars():.8f} ℏ"

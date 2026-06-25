@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 
 import pytest
 
@@ -113,6 +113,38 @@ def test_from_string():
     assert Hbar.from_string("-1.5 mℏ").to_tinybars() == -150_000
     assert Hbar.from_string("+3").to_tinybars() == 300_000_000
     assert Hbar.from_string("-3").to_tinybars() == -300_000_000
+
+
+def test_from_string_tinybar_unit():
+    """from_string should accept the tℏ (TINYBAR) unit and preserve the exact integer value.
+
+    The regex captures the unit suffix but Hbar.from_string then re-parsed
+    amount.split(" ") and passed the resulting Decimal to Hbar.__init__
+    with unit=TINYBAR. __init__'s TINYBAR branch rejects non-int amounts
+    with "Fractional tinybar value not allowed" even when the source
+    string is a whole number like "10 tℏ", because Decimal('10') is not
+    an int. The fix routes TINYBAR inputs through from_tinybars with the
+    integer-converted value, so 10 tℏ now returns 10 tinybars and -5 tℏ
+    returns -5 tinybars.
+    """
+    assert Hbar.from_string("10 tℏ").to_tinybars() == 10
+    assert Hbar.from_string("0 tℏ").to_tinybars() == 0
+    assert Hbar.from_string("-5 tℏ").to_tinybars() == -5
+    assert Hbar.from_string("+5 tℏ").to_tinybars() == 5
+
+
+def test_from_string_tinybar_unit_rejects_fractional():
+    """from_string should still reject fractional tinybar amounts after the fix.
+
+    Routing the value through from_tinybars preserves the existing
+    invariant that a TINYBAR value must be an integer: 0.5 tℏ still
+    raises because the new integral-value guard rejects any Decimal
+    whose fractional component is non-zero before int() is called,
+    matching the same "Fractional tinybar value not allowed" message
+    Hbar.__init__ would have produced for the same input.
+    """
+    with pytest.raises((ValueError, InvalidOperation)):
+        Hbar.from_string("0.5 tℏ")
 
 
 def test_to_tinybars_preserves_large_integer_values():
