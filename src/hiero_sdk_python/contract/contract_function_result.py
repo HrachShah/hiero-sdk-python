@@ -90,6 +90,7 @@ class ContractFunctionResult:
             ValueError: If the index is out of bounds or the contract call result is None
         """
         self._validate_contract_call_result()
+        self._validate_result_index(index)
 
         position = index * 32 + (32 - size)
 
@@ -104,6 +105,7 @@ class ContractFunctionResult:
     def get_address(self, index: int) -> str:
         """Gets a Solidity address from the result at the given index."""
         self._validate_contract_call_result()
+        self._validate_result_index(index)
 
         start = index * 32 + 12
         end = index * 32 + 32
@@ -374,6 +376,7 @@ class ContractFunctionResult:
     def get_bytes32(self, index: int) -> bytes:
         """Gets a Solidity bytes32 from the result at the given index."""
         self._validate_contract_call_result()
+        self._validate_result_index(index)
 
         start = index * 32
         end = start + 32

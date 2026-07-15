@@ -191,6 +191,19 @@ def test_get_value_at_index_out_of_bounds(contract_function_result):
         contract_function_result._get_value_at_index(100, 32)
 
 
+def test_getters_reject_negative_indexes(contract_function_result):
+    """Negative indexes must not read from the end of the ABI result."""
+    for getter in (
+        contract_function_result.get_uint256,
+        contract_function_result.get_address,
+        contract_function_result.get_bytes32,
+        contract_function_result.get_bytes,
+        contract_function_result.get_string,
+    ):
+        with pytest.raises(ValueError, match="Result index out of bounds"):
+            getter(-1)
+
+
 def test_contract_function_result_getters(contract_function_result):
     """Test all ContractFunctionResult getter methods using the fixture data."""
     # Test all getters with the fixture data
