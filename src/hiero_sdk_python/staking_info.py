@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from google.protobuf.message import DecodeError
+
 from hiero_sdk_python.account.account_id import AccountId
 from hiero_sdk_python.hapi.services.basic_types_pb2 import StakingInfo as StakingInfoProto
 from hiero_sdk_python.hbar import Hbar
@@ -94,7 +96,7 @@ class StakingInfo:
 
         try:
             proto = StakingInfoProto.FromString(data)
-        except Exception as exc:
+        except DecodeError as exc:
             raise ValueError(f"Failed to parse StakingInfo bytes: {exc}") from exc
 
         return cls._from_proto(proto)
