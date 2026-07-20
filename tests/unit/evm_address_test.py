@@ -30,6 +30,14 @@ def test_from_string_with_0x_prefix():
     assert len(addr.address_bytes) == 20
 
 
+def test_from_string_with_uppercase_0x_prefix():
+    """Test creating EvmAddress from a valid uppercase prefix."""
+    hex_str = "0X1234567890abcdef1234567890abcdef12345678"
+    addr = EvmAddress.from_string(hex_str)
+
+    assert addr.to_string() == hex_str[2:]
+
+
 def test_from_string_invalid_length():
     """Test ValueError for invalid hex string length."""
     with pytest.raises(ValueError):

@@ -27,7 +27,7 @@ class EvmAddress(Key):
         if not isinstance(evm_address, str):
             raise TypeError("evm_address must be a of type string.")
 
-        address = evm_address[2:] if evm_address.startswith("0x") else evm_address
+        address = evm_address[2:] if evm_address.lower().startswith("0x") else evm_address
 
         if len(address) == 40:
             return cls(address_bytes=bytes.fromhex(address))
