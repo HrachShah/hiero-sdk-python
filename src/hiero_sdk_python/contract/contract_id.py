@@ -249,14 +249,16 @@ class ContractId(Key):
             ) from e
 
         try:
-            contract = int(contract_id.split(".")[-1])
+            shard, realm, contract, checksum = parse_from_string(contract_id)
+            if (int(shard), int(realm)) != (self.shard, self.realm):
+                raise ValueError("Mirror node contract ID does not match the requested shard and realm")
             return ContractId(
                 shard=self.shard,
                 realm=self.realm,
-                contract=contract,
+                contract=int(contract),
                 evm_address=self.evm_address,
             )
-        except (ValueError, AttributeError) as e:
+        except (TypeError, ValueError) as e:
             raise ValueError(f"Invalid contract_id format received: {contract_id}") from e
 
     def __str__(self) -> str:
