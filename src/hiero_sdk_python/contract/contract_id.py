@@ -239,6 +239,8 @@ class ContractId(Key):
 
         try:
             response = perform_query_to_mirror_node(url)
+            if not isinstance(response, dict):
+                raise ValueError("Mirror node response must be an object")
             contract_id = response.get("contract_id")
             if not contract_id:
                 raise ValueError("Mirror node response missing 'contract_id'")
