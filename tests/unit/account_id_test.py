@@ -711,6 +711,17 @@ def test_populate_account_num(evm_address):
     assert new_account_id.num == 100
 
 
+def test_populate_account_num_rejects_non_object_response(evm_address):
+    account_id = AccountId.from_evm_address(evm_address, 0, 0)
+    mock_client = MagicMock()
+    mock_client.network.get_mirror_rest_url.return_value = "http://mirror_node_rest_url"
+
+    with patch("hiero_sdk_python.account.account_id.perform_query_to_mirror_node") as mock_query:
+        mock_query.return_value = []
+        with pytest.raises(ValueError, match="Mirror node response must be an object"):
+            account_id.populate_account_num(mock_client)
+
+
 def test_populate_account_num_missing_account(evm_address):
     """
     Test that populate_account_num raises a ValueError when the mirror node
@@ -786,6 +797,17 @@ def test_populate_account_evm_address(evm_address):
 
     assert account_id.evm_address is None
     assert new_account_id.evm_address == evm_address
+
+
+def test_populate_evm_address_rejects_non_object_response():
+    account_id = AccountId.from_string("0.0.100")
+    mock_client = MagicMock()
+    mock_client.network.get_mirror_rest_url.return_value = "http://mirror_node_rest_url"
+
+    with patch("hiero_sdk_python.account.account_id.perform_query_to_mirror_node") as mock_query:
+        mock_query.return_value = []
+        with pytest.raises(ValueError, match="Mirror node response must be an object"):
+            account_id.populate_evm_address(mock_client)
 
 
 def test_populate_evm_address_response_missing_evm_address():

@@ -294,6 +294,8 @@ class AccountId:
 
         try:
             data = perform_query_to_mirror_node(url)
+            if not isinstance(data, dict):
+                raise ValueError("Mirror node response must be an object")
 
             account_id = data.get("account")
             if not account_id:
@@ -337,6 +339,8 @@ class AccountId:
         url = f"{client.network.get_mirror_rest_url()}/accounts/{self.num}"
         try:
             data = perform_query_to_mirror_node(url)
+            if not isinstance(data, dict):
+                raise ValueError("Mirror node response must be an object")
 
             evm_addr = data.get("evm_address")
             if not evm_addr:
