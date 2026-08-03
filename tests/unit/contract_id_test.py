@@ -519,6 +519,34 @@ def test_populate_contract_num_invalid_response(client):
         contract_id.populate_contract_num(client)
 
 
+def test_populate_contract_num_rejects_non_object_response(client):
+    evm_address = bytes.fromhex("abcdef0123456789abcdef0123456789abcdef01")
+    contract_id = ContractId(shard=0, realm=0, evm_address=evm_address)
+
+    with (
+        patch(
+            "hiero_sdk_python.contract.contract_id.perform_query_to_mirror_node",
+            return_value=[{"contract_id": "0.0.123"}],
+        ),
+        pytest.raises(ValueError, match="Mirror node response must be an object"),
+    ):
+        contract_id.populate_contract_num(client)
+
+
+def test_populate_contract_num_rejects_mismatched_namespace(client):
+    evm_address = bytes.fromhex("abcdef0123456789abcdef0123456789abcdef01")
+    contract_id = ContractId(shard=0, realm=0, evm_address=evm_address)
+
+    with (
+        patch(
+            "hiero_sdk_python.contract.contract_id.perform_query_to_mirror_node",
+            return_value={"contract_id": "1.2.123"},
+        ),
+        pytest.raises(ValueError, match="Invalid contract_id format received"),
+    ):
+        contract_id.populate_contract_num(client)
+
+
 def test_populate_contract_num_query_fails(client):
     """Should raise error when populating contract number query fails."""
     evm_address = bytes.fromhex("abcdef0123456789abcdef0123456789abcdef01")

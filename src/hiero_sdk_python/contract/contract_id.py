@@ -239,6 +239,8 @@ class ContractId(Key):
 
         try:
             response = perform_query_to_mirror_node(url)
+            if not isinstance(response, dict):
+                raise ValueError("Mirror node response must be an object")
             contract_id = response.get("contract_id")
             if not contract_id:
                 raise ValueError("Mirror node response missing 'contract_id'")
@@ -249,14 +251,16 @@ class ContractId(Key):
             ) from e
 
         try:
-            contract = int(contract_id.split(".")[-1])
+            shard, realm, contract, _ = parse_from_string(contract_id)
+            if (int(shard), int(realm)) != (self.shard, self.realm):
+                raise ValueError("Mirror node contract ID does not match the requested shard and realm")
             return ContractId(
                 shard=self.shard,
                 realm=self.realm,
-                contract=contract,
+                contract=int(contract),
                 evm_address=self.evm_address,
             )
-        except (ValueError, AttributeError) as e:
+        except (TypeError, ValueError) as e:
             raise ValueError(f"Invalid contract_id format received: {contract_id}") from e
 
     def __str__(self) -> str:
