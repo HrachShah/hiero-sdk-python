@@ -314,10 +314,11 @@ class Network:
             str: Complete REST URL with /api/v1 suffix
         """
         is_default_port = (scheme == "https" and port == 443) or (scheme == "http" and port == 80)
+        formatted_host = f"[{host}]" if ":" in host and not host.startswith("[") else host
 
         if is_default_port:
-            return f"{scheme}://{host}/api/v1"
-        return f"{scheme}://{host}:{port}/api/v1"
+            return f"{scheme}://{formatted_host}/api/v1"
+        return f"{scheme}://{formatted_host}:{port}/api/v1"
 
     def get_mirror_rest_url(self) -> str:
         """

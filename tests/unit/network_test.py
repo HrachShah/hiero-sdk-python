@@ -381,6 +381,12 @@ def test_parse_mirror_address_preserves_bracketed_ipv6_host():
     assert network._parse_mirror_address() == ("2001:db8::1", 443)
 
 
+def test_build_rest_url_brackets_ipv6_hosts():
+    network = Network("testnet")
+
+    assert network._build_rest_url("https", "2001:db8::1", 8443) == "https://[2001:db8::1]:8443/api/v1"
+
+
 def test_parse_mirror_address(mirror_addr, expected_host, expected_port):
     """Test that _parse_mirror_address correctly splits mirror_address into host and port."""
     network = Network("testnet", mirror_address=mirror_addr)
