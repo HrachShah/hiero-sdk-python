@@ -254,6 +254,18 @@ class Network:
             tuple[str, int]: (host, port) tuple
         """
         mirror_addr = self.mirror_address
+        if mirror_addr.startswith("["):
+            closing_bracket = mirror_addr.find("]")
+            if closing_bracket == -1:
+                return (mirror_addr, 443)
+            host = mirror_addr[1:closing_bracket]
+            port_str = mirror_addr[closing_bracket + 1:]
+            if port_str.startswith(":"):
+                try:
+                    return (host, int(port_str[1:]))
+                except ValueError:
+                    pass
+            return (host, 443)
         if ":" in mirror_addr:
             host, port_str = mirror_addr.rsplit(":", 1)
             try:

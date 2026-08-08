@@ -375,6 +375,12 @@ def test_get_node_returns_none_when_not_found():
         ("badport:abc", "badport", 443),  # invalid port defaults to 443
     ],
 )
+def test_parse_mirror_address_preserves_bracketed_ipv6_host():
+    network = Network("customnet", mirror_address="[2001:db8::1]:443")
+
+    assert network._parse_mirror_address() == ("2001:db8::1", 443)
+
+
 def test_parse_mirror_address(mirror_addr, expected_host, expected_port):
     """Test that _parse_mirror_address correctly splits mirror_address into host and port."""
     network = Network("testnet", mirror_address=mirror_addr)
